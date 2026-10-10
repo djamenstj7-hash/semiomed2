@@ -1,0 +1,23 @@
+SÉMIOLOGIE MED2 — APPLICATION IPHONE
+==================================
+15 cours magistraux, 975 QCM, 1 335 flashcards et 180 défis de restitution.
+
+OUVRIR IMMÉDIATEMENT
+Téléchargez Semio_MED2_tous_les_cours_iPhone.html.
+Sur iPhone, l’aperçu de Fichiers peut ne pas exécuter l’application ; utilisez plutôt une installation Safari depuis un site HTTPS.
+
+INSTALLATION SUR IPHONE
+1. Décompressez le ZIP contenant index.html, manifest.webmanifest, icônes et service-worker.js.
+2. Publiez le dossier complet sur un hébergement HTTPS (par exemple Netlify Drop depuis un ordinateur).
+3. Sur l’iPhone, ouvrez l’adresse dans Safari.
+4. Partager → Sur l’écran d’accueil → Ajouter.
+5. Une première ouverture avec Internet permet la mise en cache pour l’usage hors connexion.
+
+SUIVI
+La progression est enregistrée localement sur l’appareil lorsque son navigateur autorise le stockage.
+Dans Suivi → Exporter mes résultats, téléchargez une sauvegarde régulièrement.
+
+CONTENU
+La banque digestive initiale reste inchangée.
+Les autres exercices sont des reformulations pédagogiques basées sur les supports de cours.
+Leur correction a été générée et nécessite une relecture éditoriale avant d’être considérée comme référence académique définitive.

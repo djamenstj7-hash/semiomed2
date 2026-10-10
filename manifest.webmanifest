@@ -1,0 +1,25 @@
+{
+  "name": "Sémiologie MED2 — Révisions interactives",
+  "short_name": "Sémio MED2",
+  "description": "15 cours de sémiologie, 975 QCM, 1335 flashcards et 180 défis de restitution",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f7fb",
+  "theme_color": "#10345e",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
