@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="apple-mobile-web-app-title" content="Sémio · MED2"/>
 <meta name="description" content="15 cours, 82 leçons, mode cours intéressant, QCM, flashcards et restitution active."/>
-<link rel="manifest" href="manifest.webmanifest"/><link rel="apple-touch-icon" href="apple-touch-icon.png"/><title>Sémio MED2 — V2.4 Missions & QCM par chapitre</title>
+<link rel="manifest" href="manifest.webmanifest"/><link rel="apple-touch-icon" href="apple-touch-icon.png"/><title>Sémio MED2 — V2.5 Visionneuse des images corrigée</title>
 <style>
 :root{--navy:#10345e;--ink:#1c354e;--blue:#2675b8;--muted:#607487;--paper:#fff;--bg:#f3f7fb;--line:#dce7f2;--mint:#e9f8ed;--red:#a33d4a;--rose:#fff0f2;--peach:#fff3e5;--sky:#e9f4ff;--shadow:0 10px 30px rgba(17,63,103,.05)}
 *,*:before,*:after{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}button,textarea,input,select{font:inherit}button,.tap,select{touch-action:manipulation;-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{opacity:.35;cursor:default}button:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #69b3f6;outline-offset:3px}
@@ -151,8 +151,20 @@
 .chapter-training-info{font-size:11px;color:#537289;line-height:1.5;margin:9px 0 0;}
 .chapter-reader-count{font-size:11px;color:#537387;padding-top:6px;}
 @media(max-width:365px){.chapter-training-actions button{font-size:10px;padding-left:4px;padding-right:4px;}}
+
+/* V2.5 : visionneuse native à l'application (pas de navigation vers une data: URL). */
+.semi-visual-modal[hidden]{display:none!important}
+.semi-visual-modal{position:fixed;inset:0;z-index:99999;background:#081b30;display:flex;flex-direction:column;color:white;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.semi-visual-toolbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(9px + env(safe-area-inset-top)) 12px 10px;background:#112d49;border-bottom:1px solid rgba(255,255,255,.18)}
+.semi-visual-title{color:white;font-size:13px;font-weight:750;min-width:0;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:center}
+.semi-visual-control{font-size:14px;font-weight:750;min-height:42px;min-width:43px;border:1px solid rgba(255,255,255,.36);background:rgba(255,255,255,.12);color:white;border-radius:12px;display:flex;justify-content:center;align-items:center;padding:0 11px;touch-action:manipulation}
+.semi-visual-close{background:#fff;color:#10345e;border-color:white}
+.semi-visual-stage{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:12px 8px;touch-action:pan-x pan-y pinch-zoom;scrollbar-width:thin}
+.semi-visual-stage img{display:block;width:100%;height:auto;max-width:none;margin:auto;object-fit:contain;background:white;border-radius:6px;user-select:none;-webkit-user-drag:none}
+.semi-visual-footer{flex:0 0 auto;text-align:center;color:#d6e7f6;font-size:12px;padding:10px 13px calc(12px + env(safe-area-inset-bottom));background:#112d49;border-top:1px solid rgba(255,255,255,.13)}
+@media(min-width:740px){.semi-visual-stage img{max-width:740px}.semi-visual-stage img.semi-visual-enlarged{max-width:none}}
 </style></head><body><div class="app">
-<header class="top"><div class="topline"><div class="brand"><div class="logomark">✚</div><div><small>Sémiologie • MED2</small><strong>Leçons & révision active</strong></div></div><div class="hintbadge">📱 iOS & Android · V2.4</div></div></header>
+<header class="top"><div class="topline"><div class="brand"><div class="logomark">✚</div><div><small>Sémiologie • MED2</small><strong>Leçons & révision active</strong></div></div><div class="hintbadge">📱 iOS & Android · V2.5</div></div></header>
 <main>
 <section id="home" class="page active"><h1 class="title">Tous tes cours.<br/>Une seule application.</h1><p class="subtitle">Cours illustrés, mémorisation active et entraînement en un seul endroit.</p>
 <div class="card hero"><div class="eyebrow">Ton programme complet</div><h2>15 cours de sémiologie</h2><p>Apprends chaque chapitre, puis entraîne-toi sur les QCM, cartes et défis — sans quitter l’application.</p><button type="button" class="btn white" id="heroStart">▶ Continuer mes révisions</button></div>
@@ -256,9 +268,9 @@ function drawReader(){
  if(lessonMode==='short'){
   let srcnote=node('div','study-note');addText(srcnote,'strong','Repères tirés de la ronéo, sans connaissances extérieures.');addText(srcnote,'div','Les formulations sont des extraits du cours. Pour conserver tous les détails, passe dans « Cours détaillé ».');host.append(srcnote);
   const art=artSlide(m.id,activeLesson);
-  if(art){const frame=node('div','figure-frame');const head=node('div','lesson-headbar');addText(head,'strong','🖼️ Fiche visuelle de révision');addText(head,'span',art.no+'/'+art.total,'tag');frame.append(head);const img=node('img');img.src=art.src;img.loading='lazy';img.alt='Fiche visuelle originale : '+m.title+', planche '+art.no;img.addEventListener('click',()=>{window.open(img.src,'_blank')});frame.append(img);addText(frame,'figcaption','Visuel fourni dans tes sources. Une fiche peut aborder plusieurs chapitres ; agrandis-la en touchant l’image.');const controls=node('div','twocol');controls.append(button('← Autre planche','outline sml',()=>{let x=art.no<=1?art.total:art.no-1;const info=LDB[m.id].fiche;img.src=info.images[x-1];head.querySelector('.tag').textContent=x+'/'+art.total;art.no=x}),button('Planche suivante →','outline sml',()=>{let x=art.no>=art.total?1:art.no+1;const info=LDB[m.id].fiche;img.src=info.images[x-1];head.querySelector('.tag').textContent=x+'/'+art.total;art.no=x}));frame.append(controls);host.append(frame)}
+  if(art){const frame=node('div','figure-frame');const head=node('div','lesson-headbar');addText(head,'strong','🖼️ Fiche visuelle de révision');addText(head,'span',art.no+'/'+art.total,'tag');frame.append(head);const img=node('img');img.src=art.src;img.loading='lazy';img.alt='Fiche visuelle originale : '+m.title+', planche '+art.no;img.addEventListener('click',()=>{window.semiOpenLessonImage(img)});frame.append(img);addText(frame,'figcaption','Visuel fourni dans tes sources. Une fiche peut aborder plusieurs chapitres ; agrandis-la en touchant l’image.');const controls=node('div','twocol');controls.append(button('← Autre planche','outline sml',()=>{let x=art.no<=1?art.total:art.no-1;const info=LDB[m.id].fiche;img.src=info.images[x-1];head.querySelector('.tag').textContent=x+'/'+art.total;art.no=x}),button('Planche suivante →','outline sml',()=>{let x=art.no>=art.total?1:art.no+1;const info=LDB[m.id].fiche;img.src=info.images[x-1];head.querySelector('.tag').textContent=x+'/'+art.total;art.no=x}));frame.append(controls);host.append(frame)}
   else{
-    let starter=node('div','card softer');addText(starter,'strong','🗺️ Carte de repérage du chapitre','oraltitle');addText(starter,'p','Notions et définitions organisées à partir de la ronéo : lis les idées repères, puis consulte le cours détaillé pour retrouver leur contexte.','minor');let tags=node('div','pillrow');const dia=LDB[m.id].diagram;if(dia){const diagram=node('img','fiche-art');diagram.src=dia.src;diagram.loading='lazy';diagram.alt=dia.title;diagram.addEventListener('click',()=>window.open(diagram.src,'_blank'));starter.append(diagram);addText(starter,'p','Schéma de repérage fondé sur l’organisation et les termes du cours.','minor')}else{const terms=c.title.split(/[,;:]/).map(x=>x.trim()).filter(Boolean);for(const term of terms.slice(0,4))addText(tags,'span',term,'tag');starter.append(tags)}host.append(starter);
+    let starter=node('div','card softer');addText(starter,'strong','🗺️ Carte de repérage du chapitre','oraltitle');addText(starter,'p','Notions et définitions organisées à partir de la ronéo : lis les idées repères, puis consulte le cours détaillé pour retrouver leur contexte.','minor');let tags=node('div','pillrow');const dia=LDB[m.id].diagram;if(dia){const diagram=node('img','fiche-art');diagram.src=dia.src;diagram.loading='lazy';diagram.alt=dia.title;diagram.addEventListener('click',()=>window.semiOpenLessonImage(diagram));starter.append(diagram);addText(starter,'p','Schéma de repérage fondé sur l’organisation et les termes du cours.','minor')}else{const terms=c.title.split(/[,;:]/).map(x=>x.trim()).filter(Boolean);for(const term of terms.slice(0,4))addText(tags,'span',term,'tag');starter.append(tags)}host.append(starter);
   }
   addText(host,'h2','À retenir dans ce chapitre','sectionhead');
   if(c.highlights.length===0)host.append(node('div','card','Ouvre le cours détaillé : ce chapitre contient principalement des tableaux, listes ou termes courts.'));
@@ -436,7 +448,7 @@ drawReader=function(){
  st.steps.forEach((x,i)=>{const line=node('section','story-step');addText(line,'span',i+1,'idx');addText(line,'p',x);sections.append(line)});
  const art=artSlide(m.id,activeLesson);
  if(art){const fig=node('figure','story-figure');const img=node('img');img.src=art.src;img.loading='lazy';img.alt=`Planche illustrée ${art.no} sur ${art.total} pour ${m.title}`;
-  img.addEventListener('click',()=>window.open(img.src,'_blank'));fig.append(img);addText(fig,'figcaption',`📌 Illustration : fiche source « ${art.from} », planche ${art.no}/${art.total}. Elle peut couvrir plusieurs chapitres. Appuie pour agrandir.`);sections.append(fig);}
+  img.addEventListener('click',()=>window.semiOpenLessonImage(img));fig.append(img);addText(fig,'figcaption',`📌 Illustration : fiche source « ${art.from} », planche ${art.no}/${art.total}. Elle peut couvrir plusieurs chapitres. Appuie pour agrandir.`);sections.append(fig);}
  if(st.quotes?.length){
   const sourceDetails=node('details','story-sources');addText(sourceDetails,'summary','📖 Approfondir avec la ronéo · '+st.quotes.length+' repères');
   const info=node('div','story-hint','Passages du CM originel avec leur page. Ils peuvent conserver des tournures de transcription. Pour retrouver tous les détails et tableaux, ouvre « Cours détaillé ».');sourceDetails.append(info);
@@ -656,5 +668,72 @@ document.querySelectorAll('.nav[data-route="qcm"],.nav[data-route="cards"],.nav[
  S.qi[m.id]=0;S.fi[m.id]=0;qSelect=[];qChecked=false;fFlipped=false;
  if(route==='qcm')renderQ();if(route==='cards')renderF();
 }));
+</script>
+
+<script>
+/* Sémio MED2 V2.5 — agrandir une image dans la même page, compatible PWA Safari/Chrome. */
+(function(){
+ 'use strict';
+ let popup=null,displayImage=null,stage=null,title=null,plus=null,minus=null;
+ let originalOverflow='',originalPosition='',originalTop='',originalWidth='',previousScrollY=0,focused=null,zoomIndex=0;
+ const sizes=[100,150,225,325];
+ function makeElement(tag,klass,content){const el=document.createElement(tag);if(klass)el.className=klass;if(content!==undefined)el.textContent=content;return el}
+ function applyZoom(){
+   if(!displayImage)return;
+   displayImage.style.width=sizes[zoomIndex]+'%';
+   displayImage.classList.toggle('semi-visual-enlarged',zoomIndex>0);
+   if(plus)plus.disabled=zoomIndex>=sizes.length-1;
+   if(minus)minus.disabled=zoomIndex<=0;
+ }
+ function close(){
+   if(!popup||popup.hidden)return;
+   popup.hidden=true;
+   document.body.style.overflow=originalOverflow;
+   document.body.style.position=originalPosition;
+   document.body.style.top=originalTop;
+   document.body.style.width=originalWidth;
+   window.scrollTo(0,previousScrollY);
+   if(displayImage)displayImage.removeAttribute('src');
+   if(focused&&typeof focused.focus==='function')focused.focus({preventScroll:true});
+ }
+ function init(){
+   if(popup)return;
+   popup=makeElement('div','semi-visual-modal');popup.hidden=true;
+   popup.setAttribute('role','dialog');popup.setAttribute('aria-modal','true');popup.setAttribute('aria-label','Image du cours agrandie');
+   const toolbar=makeElement('div','semi-visual-toolbar');
+   const exit=makeElement('button','semi-visual-control semi-visual-close','✕ Fermer');exit.type='button';exit.setAttribute('aria-label','Fermer et revenir au chapitre');exit.addEventListener('click',close);
+   title=makeElement('div','semi-visual-title','Illustration du cours');
+   minus=makeElement('button','semi-visual-control','−');minus.type='button';minus.setAttribute('aria-label','Réduire le zoom');minus.addEventListener('click',()=>{zoomIndex=Math.max(0,zoomIndex-1);applyZoom()});
+   plus=makeElement('button','semi-visual-control','+');plus.type='button';plus.setAttribute('aria-label','Agrandir le zoom');plus.addEventListener('click',()=>{zoomIndex=Math.min(sizes.length-1,zoomIndex+1);applyZoom()});
+   toolbar.append(exit,title,minus,plus);
+   stage=makeElement('div','semi-visual-stage');stage.setAttribute('aria-label','Image déplaçable du cours');
+   displayImage=makeElement('img');displayImage.alt='Illustration du cours agrandie';displayImage.decoding='async';
+   stage.append(displayImage);
+   const footer=makeElement('div','semi-visual-footer','Agrandis avec +, déplace avec ton doigt et ferme pour reprendre la lecture.');
+   popup.append(toolbar,stage,footer);
+   document.body.append(popup);
+   popup.addEventListener('click',e=>{if(e.target===popup)close()});
+   document.addEventListener('keydown',e=>{if(!popup.hidden&&e.key==='Escape'){e.preventDefault();close()}});
+ }
+ window.semiOpenLessonImage=function(source){
+   if(!source || !source.src)return;
+   init();
+   focused=document.activeElement;
+   title.textContent=source.alt||'Illustration du cours';
+   previousScrollY=window.scrollY;
+   originalOverflow=document.body.style.overflow;
+   originalPosition=document.body.style.position;
+   originalTop=document.body.style.top;
+   originalWidth=document.body.style.width;
+   document.body.style.overflow='hidden';
+   document.body.style.position='fixed';
+   document.body.style.top='-'+previousScrollY+'px';
+   document.body.style.width='100%';
+   popup.hidden=false;
+   displayImage.src=source.src;
+   zoomIndex=0;applyZoom();stage.scrollLeft=0;stage.scrollTop=0;
+   popup.querySelector('.semi-visual-close').focus({preventScroll:true});
+ };
+})();
 </script>
 </body></html>
