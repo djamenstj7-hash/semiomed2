@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="apple-mobile-web-app-title" content="Sémio · MED2"/>
 <meta name="description" content="15 cours de sémiologie, 975 QCM, 1335 flashcards, 180 défis de restitution. Application iPhone hors ligne après installation."/>
-<link rel="manifest" href="manifest.webmanifest"/><link rel="apple-touch-icon" href="apple-touch-icon.png"/><title>Sémio MED2 — V2 Leçons & Révisions</title>
+<link rel="manifest" href="manifest.webmanifest"/><link rel="apple-touch-icon" href="apple-touch-icon.png"/><title>Sémio MED2 — V2.1 Leçons & Révisions</title>
 <style>
 :root{--navy:#10345e;--ink:#1c354e;--blue:#2675b8;--muted:#607487;--paper:#fff;--bg:#f3f7fb;--line:#dce7f2;--mint:#e9f8ed;--red:#a33d4a;--rose:#fff0f2;--peach:#fff3e5;--sky:#e9f4ff;--shadow:0 10px 30px rgba(17,63,103,.05)}
 *,*:before,*:after{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}button,textarea,input,select{font:inherit}button,.tap,select{touch-action:manipulation;-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{opacity:.35;cursor:default}button:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #69b3f6;outline-offset:3px}
@@ -43,6 +43,24 @@
 .lesson-headbar{display:flex;justify-content:space-between;gap:7px;align-items:center}.lesson-headbar p{margin:1px 0 0;color:var(--muted);font-size:12px}
 .reader-stepper{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0}
 @media(max-width:420px){.bottom .nav{font-size:9.6px}.bottom .nav span{font-size:19px}.title{font-size:26px}.reader-hero h1{font-size:23px}}
+
+
+/* V2.1 — Catalogue visible pour les quinze matières */
+.lesson-catalog-intro{background:linear-gradient(135deg,#eaf5ff,#f1faf5);border:1px solid #c8e5e9;border-radius:20px;padding:17px;margin:11px 0 16px}
+.lesson-catalog-intro strong{display:block;font-size:18px;color:#10345e;margin-bottom:5px}
+.lesson-catalog-intro p{margin:0;font-size:13px;color:#4f677d;line-height:1.5}
+.lesson-cat-card{width:100%;text-align:left;display:flex;align-items:center;gap:12px;border:1px solid #dce7f2;background:#fff;border-radius:17px;padding:14px;margin:0 0 10px;color:var(--ink);box-shadow:0 2px 8px #0d325609;cursor:pointer}
+.lesson-cat-card:active{background:#ebf6ff;transform:scale(.993)}
+.lesson-cat-icon{width:44px;height:44px;display:grid;place-items:center;flex:0 0 44px;font-size:25px;border-radius:13px;background:#e9f4ff}
+.lesson-cat-detail{min-width:0;flex:1}
+.lesson-cat-detail strong{display:block;font-size:15px;color:#143756;line-height:1.4}
+.lesson-cat-detail small{display:block;font-size:12px;color:#607487;margin-top:3px;line-height:1.35}
+.lesson-cat-arrow{font-size:25px;color:#3970a4}
+.lesson-cat-label{font-size:11px;font-weight:850;color:#39729f;letter-spacing:.04em;margin:17px 0 10px;text-transform:uppercase}
+.lesson-cat-search{width:100%;border:1px solid #cbddec;border-radius:15px;padding:14px 15px;font-size:16px;outline:none;background:#fff;color:#153451;margin:6px 0 8px}
+.lesson-cat-search:focus{border-color:#4284bc;box-shadow:0 0 0 3px #afd7f060}
+.lesson-back{margin:13px 0!important}
+@media(min-width:700px){.lesson-cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}}
 </style></head><body><div class="app">
 <header class="top"><div class="topline"><div class="brand"><div class="logomark">✚</div><div><small>Sémiologie • MED2</small><strong>Leçons & révision active</strong></div></div><div class="hintbadge">📱 iPhone · V2</div></div></header>
 <main>
@@ -52,7 +70,7 @@
 <div class="card" style="margin-top:14px;background:linear-gradient(135deg,#e5f5ef,#eff7ff);border-color:#c9e6dd"><div class="eyebrow">NOUVEAU · V2</div><div class="flex between" style="align-items:flex-start"><div><strong style="font-size:18px;color:#10345e">📖 Bibliothèque de leçons</strong><p style="font-size:13px;color:#567187;margin:5px 0 11px">Tous les CM, découpés en chapitres, avec fiches visuelles, synthèse et texte du cours.</p></div></div><button class="btn green full" id="openLibrary">Explorer les leçons →</button></div><div class="sectionhead"><h2>Choisis ta matière</h2><small class="minor">15 cours</small></div>
 <input class="search" type="search" id="courseSearch" placeholder="🔎 Rechercher un cours…" aria-label="Rechercher une matière"/><div class="course-list" id="courseList"></div>
 <p class="footer-note">Corpus issu des cours magistraux fournis et de leurs annales. Les questions ajoutées sont des créations pédagogiques, non des sujets d’examen reproduits. Les niveaux « Essentiel » et « Approfondissement » servent à organiser tes révisions.</p></section>
-<section id="lessons" class="page"><div class="subjectbar" id="lessonSubject"></div><div class="flex between" style="align-items:baseline"><div><div class="eyebrow">BIBLIOTHÈQUE V2 · COURS MAGISTRAUX</div><h1 class="title" style="margin-top:8px">Leçons illustrées</h1></div><button class="btn outline sml" id="lessonBrowse">Changer</button></div><p class="subtitle" id="lessonDesc">Un cours à la fois, pour apprendre et retenir.</p><div id="lessonList"></div></section>
+<section id="lessons" class="page"><div class="subjectbar" id="lessonSubject"></div><div class="flex between" style="align-items:baseline"><div><div class="eyebrow">BIBLIOTHÈQUE V2.1 · 15 COURS MAGISTRAUX</div><h1 class="title" style="margin-top:8px">Leçons illustrées</h1></div><button class="btn outline sml" id="lessonBrowse">Changer</button></div><p class="subtitle" id="lessonDesc">Un cours à la fois, pour apprendre et retenir.</p><div id="lessonList"></div></section>
 <section id="reader" class="page"><button class="btn outline sml" id="readerBack" style="margin-top:14px">← Tous les chapitres</button><div id="readerContent"></div></section>
 <section id="qcm" class="page"><div id="qSubject"></div><div class="sectionhead"><h2>QCM d’entraînement</h2><span class="pill" id="qCount">65 QCM</span></div>
 <div class="card"><div class="filtergrid"><div class="filterbox"><label for="qChapter">Chapitre</label><select class="filter" id="qChapter"></select></div><div class="filterbox"><label for="qMode">Mode</label><select class="filter" id="qMode"><option value="all">Tous les QCM</option><option value="new">Non traités</option><option value="errors">Mes erreurs</option><option value="random">Ordre aléatoire</option></select></div></div><div class="flex between"><span class="minor" id="qCounter">Question 1/65</span><span class="minor" id="qScore"></span></div><div class="progress" style="margin-top:10px"><i id="qProg" style="width:0"></i></div></div>
@@ -175,5 +193,123 @@ $('readerBack').addEventListener('click',goLessons);
 const _renderHomeV1=renderHome;
 renderHome=function(){_renderHomeV1();document.querySelectorAll('#courseList .course').forEach(el=>{const name=el.querySelector('strong')?.textContent;const found=DB.find(x=>x.title===name);if(found){el.replaceWith(el.cloneNode(true));const newel=[...document.querySelectorAll('#courseList .course')].find(x=>x.querySelector('strong')?.textContent===name);newel.addEventListener('click',()=>selectLessonCourse(found.id));}})};
 renderHome();
+</script>
+<script>
+
+/* V2.1 correction: rendre les quinze cours visibles avant d'ouvrir leurs chapitres.
+   Conserve strictement les clés de progression de V1 et V2. */
+'use strict';
+let lessonCatalogView = 'catalogue';
+let lessonCatalogSearch = '';
+let lessonCatalogIsSelecting = false;
+const _drawChaptersV2 = drawLessons;
+const _routeToV2 = routeTo;
+const _chooseV2 = choose;
+function displayLessonCatalogue(){
+  lessonCatalogView='catalogue';
+  routeTo('lessons');
+}
+function displayLessonChapters(){
+  lessonCatalogView='chapitres';
+  lessonCatalogIsSelecting=true;
+  try {routeTo('lessons')} finally {lessonCatalogIsSelecting=false}
+}
+function pickLessonSubject(id){
+  if(!LDB[id])return;
+  lessonCatalogView='chapitres';
+  lessonCatalogIsSelecting=true;
+  try {choose(id,'lessons')} finally {lessonCatalogIsSelecting=false}
+  drawLessons();
+  window.scrollTo(0,0);
+}
+function displayCatalogue(){
+  const root=$('lessonList'); root.replaceChildren();
+  $('lessonSubject').replaceChildren();
+  $('lessonBrowse').style.display='none';
+  $('lessonDesc').textContent='Choisis une matière pour accéder aux chapitres, fiches visuelles, synthèses et cours détaillés.';
+  const intro=node('div','lesson-catalog-intro');
+  addText(intro,'strong','📚 Tous les cours au même endroit');
+  const total=Object.values(LDB).reduce((n,v)=>n+v.chapters.length,0);
+  addText(intro,'p',`${DB.length} matières · ${total} chapitres · ton programme complet de sémiologie`);
+  root.append(intro);
+  const search=node('input','lesson-cat-search');search.type='search';
+  search.placeholder='🔎 Rechercher parmi les 15 matières';
+  search.setAttribute('aria-label','Rechercher une matière dans les leçons');
+  search.value=lessonCatalogSearch;
+  root.append(search);
+  addText(root,'div','Sélectionner une matière','lesson-cat-label');
+  const wrap=node('div','lesson-cat-grid');root.append(wrap);
+  const updateList=()=>{
+    wrap.replaceChildren();
+    let filtered=DB.filter(c=>c.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(lessonCatalogSearch.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')));
+    for(const c of filtered){
+      const le=LDB[c.id], chapCount=le.chapters.length;
+      const progress=le.chapters.filter(ch=>LP[c.id+':'+ch.id]).length;
+      const card=node('button','lesson-cat-card');card.type='button';
+      card.setAttribute('aria-label',`Ouvrir ${c.title}, ${chapCount} chapitres`);
+      addText(card,'span',c.emoji,'lesson-cat-icon');
+      const info=node('span','lesson-cat-detail');
+      addText(info,'strong',le.title||c.title);
+      addText(info,'small',`${chapCount} chapitres · ${progress} validé${progress>1?'s':''}`);
+      card.append(info);addText(card,'span','›','lesson-cat-arrow');
+      card.addEventListener('click',()=>pickLessonSubject(c.id));
+      wrap.append(card);
+    }
+    if(!filtered.length)wrap.append(node('p','empty','Aucune matière trouvée.'));
+  };
+  search.addEventListener('input',()=>{lessonCatalogSearch=search.value;updateList()});
+  updateList();
+}
+drawLessons=function(){
+  if(lessonCatalogView==='catalogue')displayCatalogue();
+  else { $('lessonBrowse').style.display=''; _drawChaptersV2() }
+};
+// Le menu « Leçons » revient toujours à la liste des quinze matières.
+routeTo=function(where){
+  if(where==='lessons' && !lessonCatalogIsSelecting)lessonCatalogView='catalogue';
+  _routeToV2(where);
+  if(where==='lessons')drawLessons();
+};
+// Les éléments introduits par le correctif V2 et les boutons du lecteur
+// suivent désormais le parcours catalogue > matière > chapitre.
+choose=function(id,where='qcm'){
+  if(where==='lessons')lessonCatalogView='chapitres';
+  _chooseV2(id,where);
+};
+// Les boutons de la V2 sont recréés pour éviter que les anciens clics
+// renvoient vers l'accueil sans afficher toutes les matières.
+function replaceAction(id,caption,callback){
+  const old=$(id), fresh=old.cloneNode(true);fresh.textContent=caption;
+  old.parentNode.replaceChild(fresh,old);
+  fresh.addEventListener('click',callback);
+}
+replaceAction('openLibrary','Explorer les 15 cours →',displayLessonCatalogue);
+replaceAction('lessonBrowse','← Les 15 matières',displayLessonCatalogue);
+replaceAction('readerBack','← Chapitres de cette matière',displayLessonChapters);
+// Le bouton matière au-dessus de la liste des chapitres mène au catalogue.
+subjSelect=function(){
+  const host=$('lessonSubject');host.replaceChildren();subjectMarkup(host);
+  const b=host.querySelector('button.switch');
+  if(b)b.replaceWith(button('← Toutes les matières','switch',displayLessonCatalogue));
+};
+// Sur l'accueil, sélectionner un cours ouvre directement sa table des matières.
+renderHome=function(){
+  const target=$('courseList');target.replaceChildren();
+  const query=$('courseSearch').value.trim().toLowerCase();
+  for(const c of DB.filter(c=>c.title.toLowerCase().includes(query))){
+    const done=c.questions.filter(x=>S.responses[c.id+':'+x.n]).length;
+    const learned=c.cards.filter(x=>S.ratings[c.id+':'+x.n]==='known').length;
+    const el=node('button','course'+(c.id===m.id?' selected':''));el.type='button';
+    addText(el,'div',c.emoji,'emoji');const mid=node('div','grow');
+    addText(mid,'strong',c.title);
+    addText(mid,'p',`${LDB[c.id].chapters.length} leçons · ${done}/65 QCM · ${learned}/89 cartes`);
+    el.append(mid);addText(el,'div','›','right');
+    el.addEventListener('click',()=>pickLessonSubject(c.id));
+    target.append(el);
+  }
+  if(!target.childElementCount)target.append(node('div','empty','Aucune matière trouvée.'));
+};
+renderHome();
+
 </script>
 </body></html>
