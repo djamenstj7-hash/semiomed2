@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="apple-mobile-web-app-title" content="Sémio · MED2"/>
 <meta name="description" content="15 cours, 82 leçons, mode cours intéressant, QCM, flashcards et restitution active."/>
-<link rel="manifest" href="manifest.webmanifest"/><link rel="apple-touch-icon" href="apple-touch-icon.png"/><title>Sémio MED2 — V2.3 Missions du Jour & Leçons</title>
+<link rel="manifest" href="manifest.webmanifest"/><link rel="apple-touch-icon" href="apple-touch-icon.png"/><title>Sémio MED2 — V2.4 Missions & QCM par chapitre</title>
 <style>
 :root{--navy:#10345e;--ink:#1c354e;--blue:#2675b8;--muted:#607487;--paper:#fff;--bg:#f3f7fb;--line:#dce7f2;--mint:#e9f8ed;--red:#a33d4a;--rose:#fff0f2;--peach:#fff3e5;--sky:#e9f4ff;--shadow:0 10px 30px rgba(17,63,103,.05)}
 *,*:before,*:after{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}button,textarea,input,select{font:inherit}button,.tap,select{touch-action:manipulation;-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{opacity:.35;cursor:default}button:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #69b3f6;outline-offset:3px}
@@ -139,8 +139,20 @@
 .mission-nudge p{margin:0 0 8px;font-size:12px;color:#765d38;}
 .mission-nudge button{display:block;border:1px solid #ddbb83;background:#fffdf7;padding:10px 12px;border-radius:12px;font-weight:850;color:#94622c;min-height:42px;width:100%;}
 @media(max-width:370px){.bottom .nav{font-size:8.3px}.bottom .nav span{font-size:17px}}
+
+/* V2.4: séances strictement rattachées à un chapitre du CM */
+.chapter-training-intro{border:1px solid #b2d8d5;border-radius:18px;padding:14px;margin:10px 0 16px;background:linear-gradient(125deg,#e6f7f3,#eaf4ff);box-shadow:0 3px 12px #193d6910;}
+.chapter-training-intro .eyebrow{font-weight:900;font-size:10px;color:#287867;letter-spacing:.7px;}
+.chapter-training-intro strong{display:block;color:#173c61;font-size:16px;margin:6px 0;line-height:1.35;}
+.chapter-training-intro p{font-size:12px;line-height:1.5;color:#486980;margin:6px 0 11px;}
+.chapter-training-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.chapter-training-actions button{border-radius:12px;border:1px solid #adcdd9;background:white;padding:10px 5px;min-height:41px;font-size:11px;font-weight:800;color:#215476;}
+.chapter-training-actions button.main{color:#17654e;background:#e4f7ed;border-color:#9bdac5;}
+.chapter-training-info{font-size:11px;color:#537289;line-height:1.5;margin:9px 0 0;}
+.chapter-reader-count{font-size:11px;color:#537387;padding-top:6px;}
+@media(max-width:365px){.chapter-training-actions button{font-size:10px;padding-left:4px;padding-right:4px;}}
 </style></head><body><div class="app">
-<header class="top"><div class="topline"><div class="brand"><div class="logomark">✚</div><div><small>Sémiologie • MED2</small><strong>Leçons & révision active</strong></div></div><div class="hintbadge">📱 iOS & Android · V2.3</div></div></header>
+<header class="top"><div class="topline"><div class="brand"><div class="logomark">✚</div><div><small>Sémiologie • MED2</small><strong>Leçons & révision active</strong></div></div><div class="hintbadge">📱 iOS & Android · V2.4</div></div></header>
 <main>
 <section id="home" class="page active"><h1 class="title">Tous tes cours.<br/>Une seule application.</h1><p class="subtitle">Cours illustrés, mémorisation active et entraînement en un seul endroit.</p>
 <div class="card hero"><div class="eyebrow">Ton programme complet</div><h2>15 cours de sémiologie</h2><p>Apprends chaque chapitre, puis entraîne-toi sur les QCM, cartes et défis — sans quitter l’application.</p><button type="button" class="btn white" id="heroStart">▶ Continuer mes révisions</button></div>
@@ -577,5 +589,72 @@ renderQ=function(){_origMissionRenderQ();if(!qChecked)return;const qs=filteredQ(
 const _prevMissionRoute=routeTo;
 routeTo=function(which){_prevMissionRoute(which);if(which==='missions')renderMissions();};
 $('missionsHomeLink').addEventListener('click',()=>routeTo('missions'));
+</script>
+
+<script>
+/* V2.4 — Même corpus et mêmes sauvegardes : on filtre par page du CM, puis par statut.
+   Une question/carte est assignée au chapitre contenant sa page de source.
+   Les pages des 82 chapitres sont disjointes à l'intérieur de chaque matière.
+*/
+'use strict';
+let semioChapterFocus=null;
+function semioFindChapter(sid,cid){return (LDB[sid]?.chapters||[]).find(c=>String(c.id)===String(cid))||null;}
+function semioFocusValid(){return semioChapterFocus&&semioChapterFocus.sid===m.id&&semioFindChapter(m.id,semioChapterFocus.cid);}
+function semioInChapter(item,chap){const p=Number(item.page);return Number.isFinite(p)&&p>=Number(chap.from)&&p<=Number(chap.to);}
+function semioItemsFor(ch,sid,kind){const course=byId(sid);return (kind==='qcm'?course.questions:course.cards).filter(item=>semioInChapter(item,ch));}
+const semioUnfilteredQ=filteredQ,semioUnfilteredF=filteredF;
+filteredQ=function(){const old=semioUnfilteredQ();const chap=semioFocusValid();return chap?old.filter(q=>semioInChapter(q,chap)):old;};
+filteredF=function(){const old=semioUnfilteredF();const chap=semioFocusValid();return chap?old.filter(c=>semioInChapter(c,chap)):old;};
+function semioCloseFocus(kind){semioChapterFocus=null;const el=$(kind==='qcm'?'qChapter':'fChapter');if(el)el.value='all';
+ $('qMode').value='all';$('fMode').value='all';S.qi[m.id]=0;S.fi[m.id]=0;qSelect=[];qChecked=false;fFlipped=false;
+ if(kind==='qcm')renderQ();else renderF();}
+function semioLaunchChapter(sid,cid,kind){
+ const chap=semioFindChapter(sid,cid);if(!chap){toast('Chapitre introuvable');return;}
+ document.activeElement?.blur();choose(sid,kind);semioChapterFocus={sid,cid:String(cid)};
+ $('qChapter').value='all';$('fChapter').value='all';$('qMode').value='all';$('fMode').value='all';
+ S.qi[sid]=0;S.fi[sid]=0;qSelect=[];qChecked=false;fFlipped=false;
+ if(kind==='qcm')renderQ();else renderF();window.scrollTo({top:0,behavior:'instant'});requestAnimationFrame(()=>window.scrollTo({top:0,behavior:'instant'}));
+}
+function semioDrawFocus(kind){
+ const sec=$(kind==='qcm'?'qcm':'cards'),filter=sec?.querySelector('.filtergrid');if(!sec||!filter)return;
+ const id=kind==='qcm'?'semioChapterQBanner':'semioChapterFBanner';let banner=$(id);if(!banner){banner=document.createElement('div');banner.id=id;banner.className='chapter-training-intro';filter.parentElement.before(banner)}
+ const chap=semioFocusValid();const selector=$(kind==='qcm'?'qChapter':'fChapter');
+ if(selector?.parentElement)selector.parentElement.hidden=!!chap;
+ if(!chap){banner.hidden=true;banner.replaceChildren();return;}
+ banner.hidden=false;banner.replaceChildren();
+ const n=semioItemsFor(chap,m.id,kind).length;
+ addText(banner,'span','🎯 ENTRAÎNEMENT EXCLUSIF AU CHAPITRE','eyebrow');addText(banner,'strong',chap.title);
+ addText(banner,'p',`${n} ${kind==='qcm'?'QCM':'flashcards'} du chapitre · source : pages ${chap.from}${chap.to!==chap.from?'–'+chap.to:''} du CM · aucune question des autres chapitres.`);
+ const actions=node('div','chapter-training-actions');
+ actions.append(button('📖 Revoir ce chapitre','',()=>{const ix=(LDB[m.id]?.chapters||[]).findIndex(x=>String(x.id)===String(chap.id));
+    activeLesson=Math.max(0,ix);lessonMode='story';routeTo('reader');drawReader();}));
+ actions.append(button(kind==='qcm'?'↔ Flashcards du chapitre':'↔ QCM du chapitre','main',()=>semioLaunchChapter(m.id,chap.id,kind==='qcm'?'cards':'qcm')));
+ banner.append(actions);const all=node('button','btn outline sml full','Voir tous les '+(kind==='qcm'?'QCM':'flashcards')+' de la matière');all.type='button';all.style.marginTop='9px';all.addEventListener('click',()=>semioCloseFocus(kind));banner.append(all);
+}
+const semioRenderQ=renderQ,semioRenderF=renderF;
+renderQ=function(){semioRenderQ();semioDrawFocus('qcm');const chap=semioFocusValid();if(chap){const q=semioItemsFor(chap,m.id,'qcm');const tested=q.filter(x=>S.responses[keyq(x.n)]);const good=tested.filter(x=>S.responses[keyq(x.n)]?.good);$('qCount').textContent=q.length+' QCM · ce chapitre';$('qScore').textContent=good.length+'/'+tested.length+' réussis';}}
+renderF=function(){semioRenderF();semioDrawFocus('cards');const chap=semioFocusValid();if(chap){const cs=semioItemsFor(chap,m.id,'cards');$('fCount').textContent=cs.length+' cartes · ce chapitre';$('fScore').textContent=cs.filter(x=>S.ratings[keyf(x.n)]==='known').length+' acquises · '+cs.filter(x=>S.ratings[keyf(x.n)]==='again').length+' à revoir';}}
+const semioDrawReaderPrior=drawReader;
+drawReader=function(){semioDrawReaderPrior();const chap=lessonChaps()[activeLesson];if(!chap)return;
+ const targets=[...document.querySelectorAll('#readerContent .card')];const mark=targets.find(el=>[...el.querySelectorAll('strong')].some(st=>st.textContent.includes('Validation personnelle du chapitre')));
+ if(!mark)return;const action=mark.querySelector('.twocol');if(!action)return;action.replaceChildren();
+ const qs=semioItemsFor(chap,m.id,'qcm'),fs=semioItemsFor(chap,m.id,'cards');
+ const qb=button('🎯 QCM du chapitre ('+qs.length+')','light sml',()=>semioLaunchChapter(m.id,chap.id,'qcm'));
+ const fb=button('🧠 Flashcards du chapitre ('+fs.length+')','light sml',()=>semioLaunchChapter(m.id,chap.id,'cards'));
+ qb.disabled=qs.length===0;fb.disabled=fs.length===0;action.append(qb,fb);
+ let legend=mark.querySelector('.chapter-reader-count');if(!legend){legend=node('p','chapter-reader-count');action.after(legend)}
+ legend.textContent='Sélection basée sur les pages '+chap.from+(chap.from!==chap.to?'–'+chap.to:'')+' de ce chapitre dans la ronéo, sans mélanger les autres chapitres.';
+};
+// Les boutons des Missions du Jour utilisent maintenant le même véritable filtre.
+missionOpenRelatedQcm=function(row){semioLaunchChapter(row.sid,row.chapterId,'qcm')};
+missionOpenRelatedCard=function(row){semioLaunchChapter(row.sid,row.chapterId,'cards')};
+// La navigation principale est indépendante : QCM/Flashcards libres sans restriction.
+document.querySelectorAll('.nav[data-route="qcm"],.nav[data-route="cards"],.nav[data-route="home"]').forEach(n=>n.addEventListener('click',()=>{
+ if(!semioChapterFocus)return;
+ semioChapterFocus=null;
+ $('qChapter').value='all';$('fChapter').value='all';
+ S.qi[m.id]=0;S.fi[m.id]=0;qSelect=[];qChecked=false;fFlipped=false;
+ if(route==='qcm')renderQ();if(route==='cards')renderF();
+}));
 </script>
 </body></html>
